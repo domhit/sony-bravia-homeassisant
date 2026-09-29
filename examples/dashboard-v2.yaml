@@ -1,0 +1,700 @@
+title: Sony BRAVIA
+views:
+  - title: Fernseher
+    path: sony-bravia
+    icon: mdi:television
+    type: sections
+    max_columns: 4
+    dense_section_placement: true
+    sections:
+      # ======================================================================
+      # Sony BRAVIA KE-75XH9005
+      # ======================================================================
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: Sony BRAVIA KE-75XH9005
+            icon: mdi:television
+            heading_style: title
+            badges:
+              - type: entity
+                entity: binary_sensor.sony_bravia_ke_75xh9005_power
+                show_state: true
+                color: green
+              - type: entity
+                entity: sensor.sony_bravia_ke_75xh9005_audio_output
+                show_state: true
+                color: blue
+
+          - type: tile
+            entity: switch.sony_bravia_ke_75xh9005_power_control
+            name: Fernseher
+            icon: mdi:television
+            color: blue
+            vertical: false
+            hide_state: false
+            features_position: bottom
+            grid_options:
+              columns: 6
+              rows: 1
+
+          - type: tile
+            entity: sensor.sony_bravia_ke_75xh9005_current_content
+            name: Aktueller Inhalt
+            icon: mdi:play-box-outline
+            color: deep-purple
+            vertical: false
+            hide_state: false
+            grid_options:
+              columns: 6
+              rows: 1
+
+          - type: tile
+            entity: number.sony_bravia_ke_75xh9005_volume_control
+            name: Lautstärke
+            icon: mdi:volume-high
+            color: blue
+            vertical: false
+            hide_state: false
+            features:
+              - type: numeric-input
+                style: slider
+            features_position: bottom
+            grid_options:
+              columns: 8
+              rows: 2
+
+          - type: tile
+            entity: switch.sony_bravia_ke_75xh9005_mute_control
+            name: Stumm
+            icon: mdi:volume-mute
+            color: red
+            vertical: false
+            hide_state: false
+            grid_options:
+              columns: 4
+              rows: 2
+
+          - type: tile
+            entity: select.sony_bravia_ke_75xh9005_audio_output_control
+            name: Audioausgabe
+            icon: mdi:speaker-multiple
+            color: teal
+            vertical: false
+            hide_state: false
+            features:
+              - type: select-options
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
+
+          - type: tile
+            entity: select.sony_bravia_ke_75xh9005_input_control
+            name: Eingang
+            icon: mdi:video-input-hdmi
+            color: orange
+            vertical: false
+            hide_state: false
+            features:
+              - type: select-options
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
+
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: KE-75XH9005 Eingänge
+            icon: mdi:video-input-hdmi
+            heading_style: subtitle
+
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_hdmi_1
+                name: Xbox One X
+                icon: mdi:microsoft-xbox
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_hdmi_1
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_hdmi_2
+                name: HDMI 2
+                icon: mdi:video-input-hdmi
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_hdmi_2
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_hdmi_3
+                name: Onkyo
+                icon: mdi:audio-video
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_hdmi_3
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_hdmi_4
+                name: PS4
+                icon: mdi:sony-playstation
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_hdmi_4
+
+          - type: heading
+            heading: KE-75XH9005 Apps
+            icon: mdi:apps
+            heading_style: subtitle
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_tivimate
+                name: TiviMate
+                icon: mdi:television-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_tivimate
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_jellyfin
+                name: Jellyfin
+                icon: mdi:jellyfish
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_jellyfin
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_smarttube
+                name: SmartTube
+                icon: mdi:youtube
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_smarttube
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_prime_video
+                name: Prime Video
+                icon: mdi:movie-open-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_prime_video
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_apple_tv
+                name: Apple TV
+                icon: mdi:apple
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_apple_tv
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_joyn
+                name: Joyn
+                icon: mdi:television-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_joyn
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_ard
+                name: ARD
+                icon: mdi:television-classic
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_ard
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_zdf
+                name: ZDF
+                icon: mdi:television-classic
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_zdf
+              - type: button
+                entity: script.sony_bravia_ke75xh9005_app_synology_photos
+                name: Synology
+                icon: mdi:image-multiple
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_app_synology_photos
+
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: KE-75XH9005 Fernbedienung
+            icon: mdi:remote-tv
+            heading_style: subtitle
+
+          - type: grid
+            columns: 3
+            square: true
+            cards:
+              - type: button
+                name: Home
+                icon: mdi:home
+                entity: script.sony_bravia_ke75xh9005_remote_home
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_home
+              - type: button
+                name: Hoch
+                icon: mdi:chevron-up
+                entity: script.sony_bravia_ke75xh9005_remote_up
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_up
+              - type: button
+                name: Optionen
+                icon: mdi:dots-vertical
+                entity: script.sony_bravia_ke75xh9005_remote_options
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_options
+              - type: button
+                name: Links
+                icon: mdi:chevron-left
+                entity: script.sony_bravia_ke75xh9005_remote_left
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_left
+              - type: button
+                name: OK
+                icon: mdi:checkbox-blank-circle-outline
+                entity: script.sony_bravia_ke75xh9005_remote_ok
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_ok
+              - type: button
+                name: Rechts
+                icon: mdi:chevron-right
+                entity: script.sony_bravia_ke75xh9005_remote_right
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_right
+              - type: button
+                name: Zurück
+                icon: mdi:arrow-u-left-top
+                entity: script.sony_bravia_ke75xh9005_remote_back
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_back
+              - type: button
+                name: Runter
+                icon: mdi:chevron-down
+                entity: script.sony_bravia_ke75xh9005_remote_down
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_down
+              - type: button
+                name: Play/Pause
+                icon: mdi:play-pause
+                entity: script.sony_bravia_ke75xh9005_remote_play_pause
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_ke75xh9005_remote_play_pause
+
+      # ======================================================================
+      # Sony BRAVIA KD-70XF8305
+      # ======================================================================
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: Sony BRAVIA KD-70XF8305
+            icon: mdi:television
+            heading_style: title
+            badges:
+              - type: entity
+                entity: binary_sensor.sony_bravia_kd_70xf8305_power
+                show_state: true
+                color: green
+              - type: entity
+                entity: sensor.sony_bravia_kd_70xf8305_audio_output
+                show_state: true
+                color: blue
+
+          - type: tile
+            entity: switch.sony_bravia_kd_70xf8305_power_control
+            name: Fernseher
+            icon: mdi:television
+            color: blue
+            vertical: false
+            hide_state: false
+            grid_options:
+              columns: 6
+              rows: 1
+
+          - type: tile
+            entity: sensor.sony_bravia_kd_70xf8305_current_content
+            name: Aktueller Inhalt
+            icon: mdi:television-guide
+            color: deep-purple
+            vertical: false
+            hide_state: false
+            grid_options:
+              columns: 6
+              rows: 1
+
+          - type: markdown
+            title: Laufendes Programm
+            content: >-
+              {% set e = 'sensor.sony_bravia_kd_70xf8305_current_content' %}
+              {% set title = state_attr(e, 'programTitle') %}
+              {% set channel = state_attr(e, 'title') %}
+              {% set start = state_attr(e, 'startDateTime') %}
+              {% set duration = state_attr(e, 'durationSec') | int(0) %}
+              **{{ channel or states(e) }}**
+
+              {% if title %}### {{ title }}{% endif %}
+
+              {% if start %}Start: {{ as_timestamp(start) | timestamp_custom('%H:%M') }} Uhr{% endif %}
+              {% if duration > 0 %} · Dauer: {{ (duration / 60) | round(0) }} Min.{% endif %}
+            grid_options:
+              columns: 12
+              rows: auto
+
+          - type: tile
+            entity: number.sony_bravia_kd_70xf8305_volume_control
+            name: Lautstärke
+            icon: mdi:volume-high
+            color: blue
+            vertical: false
+            hide_state: false
+            features:
+              - type: numeric-input
+                style: slider
+            features_position: bottom
+            grid_options:
+              columns: 8
+              rows: 2
+
+          - type: tile
+            entity: switch.sony_bravia_kd_70xf8305_mute_control
+            name: Stumm
+            icon: mdi:volume-mute
+            color: red
+            vertical: false
+            hide_state: false
+            grid_options:
+              columns: 4
+              rows: 2
+
+          - type: tile
+            entity: select.sony_bravia_kd_70xf8305_audio_output_control
+            name: Audioausgabe
+            icon: mdi:speaker-multiple
+            color: teal
+            vertical: false
+            hide_state: false
+            features:
+              - type: select-options
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
+
+          - type: tile
+            entity: select.sony_bravia_kd_70xf8305_input_control
+            name: Eingang
+            icon: mdi:video-input-hdmi
+            color: orange
+            vertical: false
+            hide_state: false
+            features:
+              - type: select-options
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
+
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: KD-70XF8305 Eingänge
+            icon: mdi:video-input-hdmi
+            heading_style: subtitle
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_hdmi_1
+                name: HDMI 1
+                icon: mdi:video-input-hdmi
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_hdmi_1
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_hdmi_2
+                name: PS4 Pro
+                icon: mdi:sony-playstation
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_hdmi_2
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_hdmi_3
+                name: Xbox One
+                icon: mdi:microsoft-xbox
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_hdmi_3
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_hdmi_4
+                name: AVR
+                icon: mdi:audio-video
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_hdmi_4
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_av
+                name: Component
+                icon: mdi:video-input-component
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_av
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_set_input
+                name: Mirroring
+                icon: mdi:cast
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_set_input
+                  data:
+                    uri: extInput:widi?port=1
+
+          - type: heading
+            heading: KD-70XF8305 Apps
+            icon: mdi:apps
+            heading_style: subtitle
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_tivimate
+                name: TiviMate
+                icon: mdi:television-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_tivimate
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_jellyfin
+                name: Jellyfin
+                icon: mdi:jellyfish
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_jellyfin
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_smarttube
+                name: SmartTube
+                icon: mdi:youtube
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_smarttube
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_prime_video
+                name: Prime Video
+                icon: mdi:movie-open-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_prime_video
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_iptv_smarters_pro
+                name: IPTV Smarters
+                icon: mdi:television-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_iptv_smarters_pro
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_joyn
+                name: Joyn
+                icon: mdi:television-play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_joyn
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_ard
+                name: ARD
+                icon: mdi:television-classic
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_ard
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_zdf
+                name: ZDF
+                icon: mdi:television-classic
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_zdf
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_app_synology_photos
+                name: Synology
+                icon: mdi:image-multiple
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_app_synology_photos
+
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: KD-70XF8305 Fernbedienung
+            icon: mdi:remote-tv
+            heading_style: subtitle
+
+          - type: grid
+            columns: 3
+            square: true
+            cards:
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_home
+                name: Home
+                icon: mdi:home
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_home
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_up
+                name: Hoch
+                icon: mdi:chevron-up
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_up
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_options
+                name: Optionen
+                icon: mdi:dots-vertical
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_options
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_left
+                name: Links
+                icon: mdi:chevron-left
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_left
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_ok
+                name: OK
+                icon: mdi:checkbox-blank-circle-outline
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_ok
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_right
+                name: Rechts
+                icon: mdi:chevron-right
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_right
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_back
+                name: Zurück
+                icon: mdi:arrow-u-left-top
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_back
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_down
+                name: Runter
+                icon: mdi:chevron-down
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_down
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_audio_output_toggle
+                name: Audioausgabe
+                icon: mdi:swap-horizontal
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_audio_output_toggle
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_play
+                name: Play
+                icon: mdi:play
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_play
+              - type: button
+                entity: script.sony_bravia_kd70xf8305_remote_pause
+                name: Pause
+                icon: mdi:pause
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: script.sony_bravia_kd70xf8305_remote_pause
