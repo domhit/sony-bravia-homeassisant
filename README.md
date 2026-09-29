@@ -20,6 +20,15 @@ Copy the desired package files to `/config/packages/`, add the PSKs shown in `ex
 
 See `docs/installation.md` for details.
 
+## Generate a package from an API scan
+
+A Home Assistant package can be generated automatically from a Sony BRAVIA API scan.
+
+See:
+
+- [`ols/Scan-SonyBraviaApi.ps1
+- [`tools/Export-SonyBraviaHomeAssistant.ps1`](tools/Export-Sony
+  
 ## Features
 
 - Power, volume and mute
