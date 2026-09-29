@@ -1,0 +1,659 @@
+###############################################################################
+# Sony BRAVIA KD-70XF8305 - Home Assistant package
+# TV IP discovered in the API scan: 192.168.0.59
+#
+# Installation:
+# 1. Ensure configuration.yaml contains:
+#      homeassistant:
+#        packages: !include_dir_named packages
+# 2. Save this file as /config/packages/sony_bravia_kd70xf8305_ke75.yaml
+# 3. Add to /config/secrets.yaml:
+#      sony_bravia_kd70xf8305_psk: "YOUR_PSK"
+# 4. Check configuration and restart Home Assistant.
+###############################################################################
+
+rest:
+  # Power status
+  - resource: "http://192.168.0.59/sony/system"
+    method: POST
+    headers:
+      X-Auth-PSK: !secret sony_bravia_kd70xf8305_psk
+      Content-Type: "application/json; charset=UTF-8"
+    payload: >-
+      {"method":"getPowerStatus","params":[],"id":101,"version":"1.0"}
+    scan_interval: 10
+    timeout: 5
+    sensor:
+      - name: "Sony BRAVIA KD-70XF8305 Power Status"
+        unique_id: sony_bravia_kd70xf8305_ke75_power_status
+        value_template: >-
+          {% if value_json.result is defined %}
+            {{ value_json.result[0].status }}
+          {% else %}
+            unavailable
+          {% endif %}
+        icon: mdi:television
+
+  # Volume and mute status
+  - resource: "http://192.168.0.59/sony/audio"
+    method: POST
+    headers:
+      X-Auth-PSK: !secret sony_bravia_kd70xf8305_psk
+      Content-Type: "application/json; charset=UTF-8"
+    payload: >-
+      {"method":"getVolumeInformation","params":[],"id":102,"version":"1.0"}
+    scan_interval: 5
+    timeout: 5
+    sensor:
+      - name: "Sony BRAVIA KD-70XF8305 Volume"
+        unique_id: sony_bravia_kd70xf8305_ke75_volume
+        value_template: >-
+          {% if value_json.result is defined %}
+            {{ value_json.result[0][0].volume }}
+          {% else %}
+            unavailable
+          {% endif %}
+        unit_of_measurement: "%"
+        icon: mdi:volume-high
+      - name: "Sony BRAVIA KD-70XF8305 Mute Status"
+        unique_id: sony_bravia_kd70xf8305_ke75_mute_status
+        value_template: >-
+          {% if value_json.result is defined %}
+            {{ value_json.result[0][0].mute }}
+          {% else %}
+            unavailable
+          {% endif %}
+        icon: mdi:volume-mute
+
+  # Active audio output: speaker or audioSystem
+  - resource: "http://192.168.0.59/sony/audio"
+    method: POST
+    headers:
+      X-Auth-PSK: !secret sony_bravia_kd70xf8305_psk
+      Content-Type: "application/json; charset=UTF-8"
+    payload: >-
+      {"method":"getSoundSettings","params":[{"target":""}],"id":103,"version":"1.1"}
+    scan_interval: 10
+    timeout: 5
+    sensor:
+      - name: "Sony BRAVIA KD-70XF8305 Audio Output"
+        unique_id: sony_bravia_kd70xf8305_ke75_audio_output
+        value_template: >-
+          {% if value_json.result is defined %}
+            {{ value_json.result[0][0].currentValue }}
+          {% else %}
+            unavailable
+          {% endif %}
+        icon: mdi:speaker-multiple
+
+  # Current TV input/content. Some Android apps may return error 7 (Illegal State).
+  - resource: "http://192.168.0.59/sony/avContent"
+    method: POST
+    headers:
+      X-Auth-PSK: !secret sony_bravia_kd70xf8305_psk
+      Content-Type: "application/json; charset=UTF-8"
+    payload: >-
+      {"method":"getPlayingContentInfo","params":[],"id":104,"version":"1.0"}
+    scan_interval: 10
+    timeout: 5
+    sensor:
+      - name: "Sony BRAVIA KD-70XF8305 Current Content"
+        unique_id: sony_bravia_kd70xf8305_ke75_current_content
+        value_template: >-
+          {% if value_json.result is defined %}
+            {{ value_json.result[0].title | default(value_json.result[0].source, true) | default('unknown', true) }}
+          {% elif value_json.error is defined %}
+            app_or_unavailable
+          {% else %}
+            unavailable
+          {% endif %}
+        json_attributes_path: "$.result[0]"
+        json_attributes:
+          - uri
+          - source
+          - title
+          - programTitle
+          - mediaType
+        icon: mdi:video-input-hdmi
+
+rest_command:
+  # Generic Sony JSON-RPC call. Used by the scripts below.
+  sony_bravia_kd70xf8305_api:
+    url: "http://192.168.0.59/sony/{{ service }}"
+    method: POST
+    headers:
+      X-Auth-PSK: !secret sony_bravia_kd70xf8305_psk
+      Content-Type: "application/json; charset=UTF-8"
+    payload: >-
+      {"method":{{ method | to_json }},"params":{{ params | to_json }},"id":{{ id | default(200) }},"version":{{ version | default('1.0') | to_json }}}
+    timeout: 10
+
+  # Sony IRCC/SOAP command for remote-control buttons.
+  sony_bravia_kd70xf8305_ircc:
+    url: "http://192.168.0.59/sony/IRCC"
+    method: POST
+    headers:
+      X-Auth-PSK: !secret sony_bravia_kd70xf8305_psk
+      SOAPACTION: '"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"'
+      Content-Type: "text/xml; charset=UTF-8"
+    payload: >-
+      <?xml version="1.0"?>
+      <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+      s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+      <s:Body><u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1">
+      <IRCCCode>{{ code }}</IRCCCode>
+      </u:X_SendIRCC></s:Body></s:Envelope>
+    timeout: 10
+
+script:
+  # ----------------------------- Power --------------------------------------
+  sony_bravia_kd70xf8305_power_on:
+    alias: "Sony BRAVIA KD-70XF8305 - Power On"
+    icon: mdi:television
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: system
+          method: setPowerStatus
+          params:
+            - status: true
+          version: "1.0"
+          id: 201
+
+  sony_bravia_kd70xf8305_power_off:
+    alias: "Sony BRAVIA KD-70XF8305 - Power Off"
+    icon: mdi:television-off
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: system
+          method: setPowerStatus
+          params:
+            - status: false
+          version: "1.0"
+          id: 202
+
+  # ------------------------------ Audio -------------------------------------
+  sony_bravia_kd70xf8305_set_volume:
+    alias: "Sony BRAVIA KD-70XF8305 - Set Volume"
+    icon: mdi:volume-high
+    mode: restart
+    fields:
+      volume:
+        name: Volume
+        description: "Absolute volume from 0 to 100"
+        required: true
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: audio
+          method: setAudioVolume
+          params:
+            - target: speaker
+              volume: "{{ volume | int }}"
+              ui: "on"
+          version: "1.2"
+          id: 203
+
+  sony_bravia_kd70xf8305_mute_on:
+    alias: "Sony BRAVIA KD-70XF8305 - Mute On"
+    icon: mdi:volume-mute
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: audio
+          method: setAudioMute
+          params:
+            - status: true
+          version: "1.0"
+          id: 204
+
+  sony_bravia_kd70xf8305_mute_off:
+    alias: "Sony BRAVIA KD-70XF8305 - Mute Off"
+    icon: mdi:volume-high
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: audio
+          method: setAudioMute
+          params:
+            - status: false
+          version: "1.0"
+          id: 205
+
+  sony_bravia_kd70xf8305_audio_output_tv:
+    alias: "Sony BRAVIA KD-70XF8305 - TV Speakers"
+    icon: mdi:television-speaker
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: audio
+          method: setSoundSettings
+          params:
+            - settings:
+                - target: outputTerminal
+                  value: speaker
+          version: "1.1"
+          id: 206
+
+  sony_bravia_kd70xf8305_audio_output_system:
+    alias: "Sony BRAVIA KD-70XF8305 - Audio System"
+    icon: mdi:speaker-multiple
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: audio
+          method: setSoundSettings
+          params:
+            - settings:
+                - target: outputTerminal
+                  value: audioSystem
+          version: "1.1"
+          id: 207
+
+  # ------------------------------ Inputs ------------------------------------
+  sony_bravia_kd70xf8305_set_input:
+    alias: "Sony BRAVIA KD-70XF8305 - Set Input"
+    icon: mdi:video-input-hdmi
+    mode: restart
+    fields:
+      uri:
+        name: Input URI
+        required: true
+        example: "extInput:hdmi?port=3"
+        selector:
+          text:
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: avContent
+          method: setPlayContent
+          params:
+            - uri: "{{ uri }}"
+          version: "1.0"
+          id: 208
+
+  sony_bravia_kd70xf8305_hdmi_1:
+    alias: "Sony BRAVIA KD-70XF8305 - HDMI 1"
+    icon: mdi:microsoft-xbox
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_set_input
+        data:
+          uri: "extInput:hdmi?port=1"
+
+  sony_bravia_kd70xf8305_hdmi_2:
+    alias: "Sony BRAVIA KD-70XF8305 - HDMI 2 (PS4Pro)"
+    icon: mdi:video-input-hdmi
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_set_input
+        data:
+          uri: "extInput:hdmi?port=2"
+
+  sony_bravia_kd70xf8305_hdmi_3:
+    alias: "Sony BRAVIA KD-70XF8305 - HDMI 3/ARC (XBOXONE)"
+    icon: mdi:audio-video
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_set_input
+        data:
+          uri: "extInput:hdmi?port=3"
+
+  sony_bravia_kd70xf8305_hdmi_4:
+    alias: "Sony BRAVIA KD-70XF8305 - HDMI 4 (AVR)"
+    icon: mdi:sony-playstation
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_set_input
+        data:
+          uri: "extInput:hdmi?port=4"
+
+  sony_bravia_kd70xf8305_av:
+    alias: "Sony BRAVIA KD-70XF8305 - AV/Component"
+    icon: mdi:video-input-component
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_set_input
+        data:
+          uri: "extInput:component?port=1"
+
+  # ------------------------------- Apps -------------------------------------
+  sony_bravia_kd70xf8305_launch_app:
+    alias: "Sony BRAVIA KD-70XF8305 - Launch App"
+    icon: mdi:apps
+    mode: restart
+    fields:
+      uri:
+        name: Application URI
+        required: true
+        selector:
+          text:
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_api
+        data:
+          service: appControl
+          method: setActiveApp
+          params:
+            - uri: "{{ uri }}"
+              data: ""
+          version: "1.0"
+          id: 209
+
+  sony_bravia_kd70xf8305_app_tivimate:
+    alias: "Sony BRAVIA KD-70XF8305 - TiviMate"
+    icon: mdi:television-play
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.ar.tvplayer.tv.com.andyhax.haxsplash.LaunchActivity"
+
+  sony_bravia_kd70xf8305_app_jellyfin:
+    alias: "Sony BRAVIA KD-70XF8305 - Jellyfin"
+    icon: mdi:jellyfish
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.org.jellyfin.androidtv.org.jellyfin.androidtv.ui.startup.StartupActivity"
+
+  sony_bravia_kd70xf8305_app_smarttube:
+    alias: "Sony BRAVIA KD-70XF8305 - SmartTube"
+    icon: mdi:youtube
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.org.smarttube.stable.com.liskovsoft.smartyoutubetv2.tv.ui.main.SplashActivity"
+
+  sony_bravia_kd70xf8305_app_prime_video:
+    alias: "Sony BRAVIA KD-70XF8305 - Prime Video"
+    icon: mdi:movie-open-play
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.com.amazon.amazonvideo.livingroom.com.amazon.ignition.IgnitionActivity"
+
+  sony_bravia_kd70xf8305_app_ard:
+    alias: "Sony BRAVIA KD-70XF8305 - ARD Mediathek"
+    icon: mdi:television-classic
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.de.swr.avp.ard.tv.de.swr.avp.ard.tv.TvActivity"
+
+  sony_bravia_kd70xf8305_app_zdf:
+    alias: "Sony BRAVIA KD-70XF8305 - ZDF"
+    icon: mdi:television-classic
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.com.zdf.android.mediathek.com.zdf.android.mediathek.tv.MainActivity"
+
+  sony_bravia_kd70xf8305_app_joyn:
+    alias: "Sony BRAVIA KD-70XF8305 - Joyn"
+    icon: mdi:television-play
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.de.prosiebensat1digital.seventv.de.prosiebensat1digital.seventv.MainActivity"
+
+  sony_bravia_kd70xf8305_app_synology_photos:
+    alias: "Sony BRAVIA KD-70XF8305 - Synology Photos"
+    icon: mdi:image-multiple
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.com.synology.projectkailash.com.synology.projectkailash.ui.login.LoginActivity"
+
+  sony_bravia_kd70xf8305_app_iptv_smarters_pro:
+    alias: "Sony BRAVIA KD-70XF8305 - IPTV Smarters Pro"
+    icon: mdi:television-play
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_launch_app
+        data:
+          uri: "com.sony.dtv.com.nst.iptvsmarterstvbox.com.nst.iptvsmarterstvbox.view.activity.SplashActivity"
+
+  # --------------------------- Remote control -------------------------------
+  sony_bravia_kd70xf8305_remote_key:
+    alias: "Sony BRAVIA KD-70XF8305 - Remote Key"
+    icon: mdi:remote-tv
+    mode: queued
+    max: 20
+    fields:
+      code:
+        name: IRCC code
+        required: true
+        selector:
+          text:
+    sequence:
+      - action: rest_command.sony_bravia_kd70xf8305_ircc
+        data:
+          code: "{{ code }}"
+
+  sony_bravia_kd70xf8305_remote_home:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Home"
+    icon: mdi:home
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAQAAAAEAAABgAw=="}
+  sony_bravia_kd70xf8305_remote_back:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Back"
+    icon: mdi:arrow-u-left-top
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAJcAAAAjAw=="}
+  sony_bravia_kd70xf8305_remote_up:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Up"
+    icon: mdi:chevron-up
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAQAAAAEAAAB0Aw=="}
+  sony_bravia_kd70xf8305_remote_down:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Down"
+    icon: mdi:chevron-down
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAQAAAAEAAAB1Aw=="}
+  sony_bravia_kd70xf8305_remote_left:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Left"
+    icon: mdi:chevron-left
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAQAAAAEAAAA0Aw=="}
+  sony_bravia_kd70xf8305_remote_right:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Right"
+    icon: mdi:chevron-right
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAQAAAAEAAAAzAw=="}
+  sony_bravia_kd70xf8305_remote_ok:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - OK"
+    icon: mdi:checkbox-blank-circle-outline
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAQAAAAEAAABlAw=="}
+  sony_bravia_kd70xf8305_remote_play:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Play"
+    icon: mdi:play
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAJcAAAAaAw=="}
+  sony_bravia_kd70xf8305_remote_pause:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Pause"
+    icon: mdi:pause
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAJcAAAAZAw=="}
+  sony_bravia_kd70xf8305_remote_audio_system:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Audio System"
+    icon: mdi:speaker-multiple
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAMQAAAAiAw=="}
+  sony_bravia_kd70xf8305_remote_tv_speaker:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - TV Speaker"
+    icon: mdi:television-speaker
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAMQAAAAjAw=="}
+  sony_bravia_kd70xf8305_remote_audio_output_toggle:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Toggle Audio Output"
+    icon: mdi:swap-horizontal
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAMQAAAAkAw=="}
+  sony_bravia_kd70xf8305_remote_options:
+    alias: "Sony BRAVIA KD-70XF8305 Remote - Options"
+    icon: mdi:dots-vertical
+    sequence:
+      - action: script.sony_bravia_kd70xf8305_remote_key
+        data: {code: "AAAAAgAAAJcAAAA2Aw=="}
+
+  # Refresh REST entities after a command instead of waiting for scan_interval.
+  sony_bravia_kd70xf8305_refresh_status:
+    alias: "Sony BRAVIA KD-70XF8305 - Refresh Status"
+    icon: mdi:refresh
+    sequence:
+      - action: homeassistant.update_entity
+        target:
+          entity_id:
+            - sensor.sony_bravia_kd70xf8305_power_status
+            - sensor.sony_bravia_kd70xf8305_volume
+            - sensor.sony_bravia_kd70xf8305_mute_status
+            - sensor.sony_bravia_kd70xf8305_audio_output
+            - sensor.sony_bravia_kd70xf8305_current_content
+
+template:
+  - binary_sensor:
+      - name: "Sony BRAVIA KD-70XF8305 Power"
+        unique_id: sony_bravia_kd70xf8305_ke75_power
+        device_class: power
+        state: "{{ is_state('sensor.sony_bravia_kd70xf8305_power_status', 'active') }}"
+        availability: >-
+          {{ states('sensor.sony_bravia_kd70xf8305_power_status') not in ['unknown', 'unavailable'] }}
+
+      - name: "Sony BRAVIA KD-70XF8305 Muted"
+        unique_id: sony_bravia_kd70xf8305_ke75_muted
+        device_class: sound
+        state: "{{ is_state('sensor.sony_bravia_kd70xf8305_mute_status', 'True') or is_state('sensor.sony_bravia_kd70xf8305_mute_status', 'true') }}"
+        availability: >-
+          {{ states('sensor.sony_bravia_kd70xf8305_mute_status') not in ['unknown', 'unavailable'] }}
+
+  - number:
+      - name: "Sony BRAVIA KD-70XF8305 Volume Control"
+        unique_id: sony_bravia_kd70xf8305_ke75_volume_control
+        icon: mdi:volume-high
+        min: 0
+        max: 100
+        step: 1
+        state: "{{ states('sensor.sony_bravia_kd70xf8305_volume') | int(0) }}"
+        availability: >-
+          {{ states('sensor.sony_bravia_kd70xf8305_volume') not in ['unknown', 'unavailable'] }}
+        set_value:
+          - action: script.sony_bravia_kd70xf8305_set_volume
+            data:
+              volume: "{{ value | int }}"
+          - delay: "00:00:01"
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.sony_bravia_kd70xf8305_volume
+
+  - select:
+      - name: "Sony BRAVIA KD-70XF8305 Audio Output Control"
+        unique_id: sony_bravia_kd70xf8305_ke75_audio_output_control
+        icon: mdi:speaker-multiple
+        options:
+          - "TV Speakers"
+          - "Audio System"
+        state: >-
+          {% if is_state('sensor.sony_bravia_kd70xf8305_audio_output', 'audioSystem') %}
+            Audio System
+          {% elif is_state('sensor.sony_bravia_kd70xf8305_audio_output', 'speaker') %}
+            TV Speakers
+          {% else %}
+            {{ none }}
+          {% endif %}
+        availability: >-
+          {{ states('sensor.sony_bravia_kd70xf8305_audio_output') not in ['unknown', 'unavailable'] }}
+        select_option:
+          - choose:
+              - conditions: "{{ option == 'Audio System' }}"
+                sequence:
+                  - action: script.sony_bravia_kd70xf8305_audio_output_system
+              - conditions: "{{ option == 'TV Speakers' }}"
+                sequence:
+                  - action: script.sony_bravia_kd70xf8305_audio_output_tv
+          - delay: "00:00:02"
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.sony_bravia_kd70xf8305_audio_output
+
+      - name: "Sony BRAVIA KD-70XF8305 Input Control"
+        unique_id: sony_bravia_kd70xf8305_ke75_input_control
+        icon: mdi:video-input-hdmi
+        options:
+          - "HDMI 1 - Xbox One X"
+          - "HDMI 2 (PS4Pro)"
+          - "HDMI 3 - Onkyo"
+          - "HDMI 4 - PS4"
+          - "AV"
+          - "Onkyo via CEC"
+          - "PlayStation 3 via CEC"
+        state: >-
+          {% set uri = state_attr('sensor.sony_bravia_kd70xf8305_current_content', 'uri') | default('', true) %}
+          {% if uri == 'extInput:hdmi?port=1' %}HDMI 1 - Xbox One X
+          {% elif uri == 'extInput:hdmi?port=2' %}HDMI 2
+          {% elif uri == 'extInput:hdmi?port=3' %}HDMI 3 - Onkyo
+          {% elif uri == 'extInput:hdmi?port=4' %}HDMI 4 - PS4
+          {% elif uri == 'extInput:component?port=1' %}AV
+          {% elif 'logicalAddr=5' in uri %}Onkyo via CEC
+          {% elif 'logicalAddr=b' in uri %}PlayStation 3 via CEC
+          {% else %}{{ none }}{% endif %}
+        select_option:
+          - choose:
+              - conditions: "{{ option == 'HDMI 1 - Xbox One X' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_hdmi_1}]
+              - conditions: "{{ option == 'HDMI 2' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_hdmi_2}]
+              - conditions: "{{ option == 'HDMI 3 - Onkyo' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_hdmi_3}]
+              - conditions: "{{ option == 'HDMI 4 - PS4' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_hdmi_4}]
+              - conditions: "{{ option == 'AV' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_av}]
+              - conditions: "{{ option == 'Onkyo via CEC' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_onkyo_cec}]
+              - conditions: "{{ option == 'PlayStation 3 via CEC' }}"
+                sequence: [{action: script.sony_bravia_kd70xf8305_ps3_cec}]
+          - delay: "00:00:02"
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.sony_bravia_kd70xf8305_current_content
+
+  - switch:
+      - name: "Sony BRAVIA KD-70XF8305 Mute Control"
+        unique_id: sony_bravia_kd70xf8305_ke75_mute_control
+        icon: mdi:volume-mute
+        state: "{{ is_state('binary_sensor.sony_bravia_kd70xf8305_muted', 'on') }}"
+        availability: >-
+          {{ states('sensor.sony_bravia_kd70xf8305_mute_status') not in ['unknown', 'unavailable'] }}
+        turn_on:
+          - action: script.sony_bravia_kd70xf8305_mute_on
+          - delay: "00:00:01"
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.sony_bravia_kd70xf8305_mute_status
+        turn_off:
+          - action: script.sony_bravia_kd70xf8305_mute_off
+          - delay: "00:00:01"
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.sony_bravia_kd70xf8305_mute_status
+
+      - name: "Sony BRAVIA KD-70XF8305 Power Control"
+        unique_id: sony_bravia_kd70xf8305_ke75_power_control
+        icon: mdi:television
+        state: "{{ is_state('binary_sensor.sony_bravia_kd70xf8305_power', 'on') }}"
+        turn_on:
+          - action: script.sony_bravia_kd70xf8305_power_on
+        turn_off:
+          - action: script.sony_bravia_kd70xf8305_power_off

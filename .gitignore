@@ -1,0 +1,5 @@
+secrets.yaml
+*.local.yaml
+scans/*.json
+scans/*.json.txt
+!scans/README.md

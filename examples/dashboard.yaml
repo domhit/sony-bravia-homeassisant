@@ -1,0 +1,7 @@
+type: entities
+title: Sony BRAVIA TVs
+entities:
+  - switch.sony_bravia_ke75xh9005_power_control
+  - select.sony_bravia_ke75xh9005_audio_output_control
+  - switch.sony_bravia_kd70xf8305_power_control
+  - select.sony_bravia_kd70xf8305_audio_output_control
