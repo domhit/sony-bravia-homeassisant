@@ -1,0 +1,655 @@
+title: Sony KD-70XF8305
+views:
+  - title: KD-70XF8305
+    path: kd70xf8305
+    icon: mdi:television
+    type: sections
+    max_columns: 4
+    dense_section_placement: true
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Sony BRAVIA KD-70XF8305
+            icon: mdi:television
+            heading_style: title
+          - show_name: false
+            show_icon: true
+            type: button
+            icon: mdi:power-plug-outline
+            show_state: false
+            tap_action:
+              action: toggle
+            entity: switch.tasmota_3
+          - type: tile
+            entity: media_player.kd_70xf8305_2
+            name: KD-70XF8305
+            hide_state: false
+            icon: mdi:television
+          - type: button
+            icon: mdi:power
+            show_name: false
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: remote.send_command
+              target:
+                entity_id: remote.kd_70xf8305_remote
+              data:
+                command: TvPower
+          - type: markdown
+            title: Aktueller Inhalt
+            content: >-
+              {% set e = 'sensor.kd70_current_content' %}
+
+              **Quelle:** {{ states(e) }}
+
+              {% if state_attr(e,'programTitle') %} **Sendung:** {{
+              state_attr(e,'programTitle') }} {% endif %}
+
+              {% if state_attr(e,'mediaType') %} **Typ:** {{
+              state_attr(e,'mediaType') }} {% endif %}
+          - type: entities
+            title: Einstellungen
+            entities:
+              - entity: select.kd_70xf8305_sound_output
+              - entity: number.kd_70xf8305_brightness
+          - type: custom:mushroom-template-card
+            entity: media_player.kd_70xf8305
+            primary: Lautstärke
+            secondary: >
+              {{ (state_attr('media_player.kd_70xf8305_2', 'volume_level') *
+              100) | round(0) }} 
+            icon: mdi:volume-high
+            grid_options:
+              columns: 12
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: Quellen
+            icon: mdi:video-input-hdmi
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                icon: mdi:television
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: TV
+              - type: button
+                icon: mdi:sony-playstation
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: PS4Pro
+              - type: button
+                icon: mdi:microsoft-xbox
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: XBOXONE
+              - type: button
+                icon: mdi:audio-video
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: AVR
+              - type: button
+                icon: mdi:video-input-component
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: AV/Component
+              - type: button
+                icon: mdi:cast
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: Bildschirm spiegeln
+      - type: grid
+        cards:
+          - type: heading
+            heading: Apps
+            icon: mdi:apps
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: TiviMate
+                icon: mdi:television-play
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: TiviMate
+              - type: button
+                name: SmartTube
+                icon: mdi:youtube
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: SmartTube
+              - type: button
+                name: Jellyfin
+                icon: mdi:jellyfish
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: Jellyfin
+              - type: button
+                name: Prime
+                icon: mdi:movie-open-play
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: Prime Video
+              - type: button
+                name: Joyn
+                icon: mdi:television-play
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: Joyn
+              - type: button
+                name: ARD
+                icon: mdi:television-classic
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: ARD Mediathek
+              - type: button
+                name: ZDF
+                icon: mdi:television-classic
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: ZDF
+              - type: button
+                name: Synology
+                icon: mdi:image-multiple
+                tap_action:
+                  action: call-service
+                  service: media_player.select_source
+                  target:
+                    entity_id: media_player.kd_70xf8305_2
+                  data:
+                    source: Synology Photos
+              - show_name: true
+                show_icon: true
+                type: button
+                name: Apps schliessen
+                icon: ''
+                tap_action:
+                  action: perform-action
+                  target: {}
+                  perform_action: ''
+                entity: button.kd_70xf8305_terminate_apps
+      - type: grid
+        cards:
+          - type: heading
+            heading: Navigation
+            icon: mdi:remote-tv
+          - type: grid
+            columns: 3
+            cards:
+              - type: button
+                icon: mdi:home
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_home
+              - type: button
+                icon: mdi:chevron-up
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_up
+              - type: button
+                icon: mdi:dots-vertical
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_options
+              - type: button
+                icon: mdi:chevron-left
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_left
+              - type: button
+                icon: mdi:checkbox-marked-circle
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_ok
+              - type: button
+                icon: mdi:chevron-right
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_right
+              - type: button
+                icon: mdi:arrow-left
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_back
+              - type: button
+                icon: mdi:chevron-down
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_down
+              - type: button
+                icon: mdi:import
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_input
+      - type: grid
+        cards:
+          - type: heading
+            heading: TV
+            icon: mdi:television-classic
+          - type: grid
+            columns: 4
+            cards:
+              - type: button
+                icon: mdi:arrow-up-bold
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_channel_up
+              - type: button
+                icon: mdi:volume-plus
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_volume_up
+              - type: button
+                icon: mdi:volume-mute
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_mute
+              - type: button
+                icon: mdi:television-guide
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: GGuide
+              - type: button
+                icon: mdi:arrow-down-bold
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_channel_down
+              - type: button
+                icon: mdi:volume-minus
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_volume_down
+              - type: button
+                icon: mdi:television
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Tv
+      - type: grid
+        cards:
+          - type: heading
+            heading: Numpad
+            icon: mdi:dialpad
+          - type: grid
+            columns: 3
+            square: true
+            cards:
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '1'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num1
+                icon: mdi:numeric-1-box
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '2'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num2
+                icon: mdi:numeric-2-box
+              - show_name: false
+                show_icon: true
+                type: button
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num3
+                icon: mdi:numeric-3-box
+                name: '3'
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '4'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num4
+                icon: mdi:numeric-4-box
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '5'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num5
+                icon: mdi:numeric-5-box
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '6'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num6
+                icon: mdi:numeric-6-box
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '7'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num7
+                icon: mdi:numeric-7-box
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '8'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num8
+                icon: mdi:numeric-8-box
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '9'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num9
+                icon: mdi:numeric-9-box
+              - show_name: false
+                show_icon: true
+                type: button
+                icon: ''
+              - show_name: false
+                show_icon: true
+                type: button
+                name: '0'
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Num0
+                icon: mdi:numeric-0-box
+              - show_name: false
+                show_icon: true
+                type: button
+                icon: ''
+      - type: grid
+        cards:
+          - type: heading
+            heading: Wiedergabe
+            icon: mdi:play-circle
+          - type: grid
+            columns: 4
+            cards:
+              - type: button
+                icon: mdi:skip-previous
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Prev
+              - type: button
+                icon: mdi:rewind
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Rewind
+              - type: button
+                icon: mdi:play
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_play
+              - type: button
+                icon: mdi:pause
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_pause
+              - type: button
+                icon: mdi:stop
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_remote_stop
+              - type: button
+                icon: mdi:fast-forward
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Forward
+              - type: button
+                icon: mdi:skip-next
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.kd_70xf8305_remote
+                  data:
+                    command: Next
+      - type: grid
+        cards:
+          - type: heading
+            heading: Spezial
+            icon: mdi:wrench
+          - type: grid
+            columns: 3
+            cards:
+              - type: button
+                icon: mdi:monitor-off
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_picture_off
+              - type: button
+                icon: mdi:monitor
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_picture_on
+              - type: button
+                icon: mdi:restart
+                show_name: false
+                show_state: false
+                tap_action:
+                  action: perform-action
+                  perform_action: button.press
+                  target:
+                    entity_id: button.kd_70xf8305_reboot
